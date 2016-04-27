@@ -1,5 +1,5 @@
 var imageObjectsArray = [];
-var bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, babySweep, tauntaun, unicorn, usb, waterCan, wineGlass;
+//var bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, babySweep, tauntaun, unicorn, usb, waterCan, wineGlass;
 var possibleChoiceBoxes;
 var totalClicks = 0;
 
@@ -60,11 +60,20 @@ possibleChoiceBoxes = document.getElementsByClassName('possibleChoiceBox');
 
 //The function below is for populating the DOM with the images
 function putRandomImagesOnDOM(){
+  var random1 = Math.floor(Math.random() * imageObjectsArray.length);
+  var random2 = random1;
+  while (random2 === random1){
+    random2 = Math.floor(Math.random() * imageObjectsArray.length);
+  }
+  var random3 = random2;
+  while (random3 === random2 || random3 === random1){
+    random3 = Math.floor(Math.random() * imageObjectsArray.length);
+  }
+  var randomArrayOfThree = [random1, random2, random3];
   for (var i = 0; i < possibleChoiceBoxes.length; i++) {
-    var randomizer = Math.floor(Math.random() * imageObjectsArray.length);
-    possibleChoiceBoxes[i].setAttribute('src', imageObjectsArray[randomizer].filePath);
-    possibleChoiceBoxes[i].setAttribute('id', imageObjectsArray[randomizer].myID);
-    imageObjectsArray[randomizer].iWasDisplayed();
+    possibleChoiceBoxes[i].setAttribute('src', imageObjectsArray[randomArrayOfThree[i]].filePath);
+    possibleChoiceBoxes[i].setAttribute('id', imageObjectsArray[randomArrayOfThree[i]].myID);
+    imageObjectsArray[randomArrayOfThree[i]].iWasDisplayed();
   }
 }
 putRandomImagesOnDOM();
@@ -94,7 +103,7 @@ function handleImageClick(event){
 }
 //Click-event handler above
 
-//adding event listener for all 3 images in array created on line `59`
+//adding event listener for all 3 images in array created
 for (var i = 0; i < possibleChoiceBoxes.length; i++) {
   possibleChoiceBoxes[i].addEventListener('click', handleImageClick);
 }
