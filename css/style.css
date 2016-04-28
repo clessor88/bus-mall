@@ -12,9 +12,14 @@ header {
 }
 
 img {
-  width: 200px;
-  height: 200px;
+  width: 275px;
   margin: 0px;
   border: 2px solid #ACCFCC;
   border-radius: 25px;
+  transition: all .5s;
+}
+
+img:hover{
+  opacity: .67;
+  border-radius: 50%;
 }

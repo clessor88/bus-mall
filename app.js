@@ -67,13 +67,13 @@ putNamesInLabelsArray();
 
 function putIndividualClicksInArray(){
   for (var i = 0; i < imageObjectsArray.length; i++){
-    historicalIndividualClicks.push(imageObjectsArray[i].timesClicked);
+    historicalIndividualClicks[i] = imageObjectsArray[i].timesClicked;
   }
 }
 
 function putIndividualDisplaysInArray(){
   for (var i = 0; i < imageObjectsArray.length; i++){
-    historicalIndividualDisplays.push(imageObjectsArray[i].timesDisplayed);
+    historicalIndividualDisplays[i] = (imageObjectsArray[i].timesDisplayed);
   }
 }
 
@@ -82,9 +82,17 @@ function makePercentageArray(){
     if (imageObjectsArray[i].timesDisplayed === 0){
       clickPercentageArray.push(0);
     } else {
-      clickPercentageArray.push((imageObjectsArray[i].timesClicked / imageObjectsArray[i].timesDisplayed) * 100);
+      clickPercentageArray.push((historicalIndividualClicks[i] / historicalIndividualDisplays[i]) * 100);
     }
   }
+}
+
+function plop(firstArray, secondArray){
+  var ploppedArray = [];
+  for (var i = 0; i < firstArray.length; i++){
+    ploppedArray.push(firstArray[i] + secondArray[i]);
+  }
+  return ploppedArray;
 }
 
 //set variable for array of 3 images
@@ -125,15 +133,9 @@ function handleImageClick(event){
   //Register individual item clicks above
 
   //Log clicks and display count below
-  for (var i = 0; i < imageObjectsArray.length; i++){
-    console.log(imageObjectsArray[i].name + ' has been displayed ' + imageObjectsArray[i].timesDisplayed + ' and clicked ' + imageObjectsArray[i].timesClicked + '.');
-  }
-
-  console.log('Total clicks: ' + totalClicks);
-
   putRandomImagesOnDOM();
 
-  if (totalClicks === 25) {
+  if (totalClicks === 10) {
     putIndividualClicksInArray();
     putIndividualDisplaysInArray();
     var continueForm = document.createElement('form');
@@ -143,7 +145,7 @@ function handleImageClick(event){
     continueForm.appendChild(continueFormFieldset);
     var continueFormLegend = document.createElement('legend');
     continueFormLegend.setAttribute('id', 'continueFormLegend');
-    continueFormLegend.textContent = 'You have made 25 selections. Would you like to continue playing or see your selection data?';
+    continueFormLegend.textContent = 'You have made ' + totalClicks + ' selections. Would you like to continue playing or see your selection data?';
     continueFormFieldset.appendChild(continueFormLegend);
     var moreButton = document.createElement('button');
     moreButton.setAttribute('id', 'moreButton');
@@ -163,7 +165,7 @@ function handleImageClick(event){
     removingEventListenerForTheImages();
   }
 
-  if (totalClicks === 35){
+  if (totalClicks === 15){
     putIndividualClicksInArray();
     putIndividualDisplaysInArray();
     showData();
@@ -187,8 +189,11 @@ function removingEventListenerForTheImages() {
 
 //...
 function handleKeepPlaying(event){
-  addingEventListenerForTheImages();
-
+  var moreButton = document.getElementById('moreButton');
+  moreButton.removeEventListener('click', handleKeepPlaying);
+  if (totalClicks < 15){
+    addingEventListenerForTheImages();
+  }
 }
 //...
 function handleSeeData(event){
@@ -197,8 +202,17 @@ function handleSeeData(event){
 
 //...
 function showData(){
+  grabRecordsFromLocStorage();
+  saveRecordsToLocStorage();
+  document.getElementById('myH1').textContent = 'Thanks for contributing. Check out your statistics below!';
   removingEventListenerForTheImages();
   makePercentageArray();
+  var dataButton = document.getElementById('dataButton');
+  dataButton.removeEventListener('click', handleSeeData);
+
+  var moreButton = document.getElementById('moreButton');
+  moreButton.removeEventListener('click', handleKeepPlaying);
+
   var mainArea = document.getElementById('mainArea');
   var chartCanvas = document.createElement('canvas');
   chartCanvas.setAttribute('id', 'chartCanvas');
@@ -207,25 +221,58 @@ function showData(){
   mainArea.appendChild(chartCanvas);
 
   //create chart?...
-  var ctx = document.getElementById("myChart");
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3]
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-});
-//  var myChart = new Chart(context).Bar(data);
+  var canvasEl = document.getElementById('chartCanvas');
+  var context = canvasEl.getContext('2d');
+
+  var data = {
+    labels: labelsArray,
+    datasets: [
+      {
+        label: 'Clicks',
+        fillColor: '#B8AE9C',
+        strokeColor: '#B8AE9C',
+        highlightFill: '#B8AE9C',
+        highlightStroke: '#B8AE9C',
+        data: historicalIndividualClicks
+      },
+      {
+        label: 'Times Displayed',
+        fillColor: '#ACCFCC',
+        strokeColor: '#ACCFCC',
+        highlightFill: '#ACCFCC',
+        highlightStroke: '#ACCFCC',
+        data: historicalIndividualDisplays
+      },
+      {
+        label: 'Click/Display Percentage',
+        fillColor: '#8A0917',
+        strokeColor: '#8A0917',
+        highlightFill: '#8A0917',
+        highlightStroke: '#8A0917',
+        data: clickPercentageArray
+      }
+    ]
+  };
+  var myChart = new Chart(context).Bar(data);
 }
+
+function saveRecordsToLocStorage(){
+  localStorage.setItem('clickRecords', JSON.stringify(historicalIndividualClicks));
+  localStorage.setItem('displayRecords', JSON.stringify(historicalIndividualDisplays));
+}
+
+function grabRecordsFromLocStorage(){
+  var clickRecords = JSON.parse(localStorage.getItem('clickRecords'));
+
+  if (clickRecords){
+    historicalIndividualClicks = plop(historicalIndividualClicks, clickRecords);
+  }
+
+  var displayRecords = JSON.parse(localStorage.getItem('displayRecords'));
+
+  if (displayRecords){
+    historicalIndividualDisplays = plop(historicalIndividualDisplays, displayRecords);
+  }
+}
+
+putRandomImagesOnDOM();
