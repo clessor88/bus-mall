@@ -79,11 +79,7 @@ function putIndividualDisplaysInArray(){
 
 function makePercentageArray(){
   for (var i = 0; i < imageObjectsArray.length; i++){
-    if (imageObjectsArray[i].timesDisplayed === 0){
-      clickPercentageArray.push(0);
-    } else {
-      clickPercentageArray.push((historicalIndividualClicks[i] / historicalIndividualDisplays[i]) * 100);
-    }
+    clickPercentageArray.push((historicalIndividualClicks[i] / historicalIndividualDisplays[i]) * 100);
   }
 }
 
@@ -135,7 +131,7 @@ function handleImageClick(event){
   //Log clicks and display count below
   putRandomImagesOnDOM();
 
-  if (totalClicks === 10) {
+  if (totalClicks === 15) {
     putIndividualClicksInArray();
     putIndividualDisplaysInArray();
     var continueForm = document.createElement('form');
@@ -165,7 +161,7 @@ function handleImageClick(event){
     removingEventListenerForTheImages();
   }
 
-  if (totalClicks === 15){
+  if (totalClicks === 20){
     putIndividualClicksInArray();
     putIndividualDisplaysInArray();
     showData();
@@ -191,7 +187,7 @@ function removingEventListenerForTheImages() {
 function handleKeepPlaying(event){
   var moreButton = document.getElementById('moreButton');
   moreButton.removeEventListener('click', handleKeepPlaying);
-  if (totalClicks < 15){
+  if (totalClicks < 20){
     addingEventListenerForTheImages();
   }
 }
@@ -204,7 +200,7 @@ function handleSeeData(event){
 function showData(){
   grabRecordsFromLocStorage();
   saveRecordsToLocStorage();
-  document.getElementById('myH1').textContent = 'Thanks for contributing. Check out your statistics below!';
+  document.getElementById('myH1').textContent = 'Thanks for contributing. Check out your results below!';
   removingEventListenerForTheImages();
   makePercentageArray();
   var dataButton = document.getElementById('dataButton');
@@ -229,31 +225,36 @@ function showData(){
     datasets: [
       {
         label: 'Clicks',
-        fillColor: '#B8AE9C',
-        strokeColor: '#B8AE9C',
-        highlightFill: '#B8AE9C',
-        highlightStroke: '#B8AE9C',
+        fillColor: '#4B088A',
+        strokeColor: '#4B088A',
+        highlightFill: '#4B088A',
+        highlightStroke: '#4B088A',
         data: historicalIndividualClicks
       },
       {
         label: 'Times Displayed',
-        fillColor: '#ACCFCC',
-        strokeColor: '#ACCFCC',
-        highlightFill: '#ACCFCC',
-        highlightStroke: '#ACCFCC',
+        fillColor: '#FE9A2E',
+        strokeColor: '#FE9A2E',
+        highlightFill: '#FE9A2E',
+        highlightStroke: '#FE9A2E',
         data: historicalIndividualDisplays
-      },
-      {
-        label: 'Click/Display Percentage',
-        fillColor: '#8A0917',
-        strokeColor: '#8A0917',
-        highlightFill: '#8A0917',
-        highlightStroke: '#8A0917',
-        data: clickPercentageArray
       }
     ]
   };
   var myChart = new Chart(context).Bar(data);
+
+  var changeButtons = document.getElementById('continueFormFieldset');
+  document.getElementById('moreButton').style.display = ('none');
+  document.getElementById('dataButton').style.display = ('none');
+
+  document.getElementById('continueFormLegend').textContent = 'Would you like to do this all over again? I think you would...';
+
+  var reloadButton = document.createElement('button');
+  reloadButton.setAttribute('id', 'reloadButton');
+  reloadButton.setAttribute('type', 'button');
+  reloadButton.setAttribute('onClick', 'window.location.reload()');
+  reloadButton.textContent = 'Start Over?';
+  changeButtons.appendChild(reloadButton);
 }
 
 function saveRecordsToLocStorage(){

@@ -1,3 +1,10 @@
+@import url(https://fonts.googleapis.com/css?family=Exo+2:400,700);
+
+body{
+  background-color:#D8D8D8;
+  font-family: 'Exo 2', sans-serif;
+}
+
 header {
   margin: auto;
   margin-top: 40px;
@@ -6,20 +13,37 @@ header {
 
 .containerBox {
   margin: auto;
-  width:960px;
-  padding-left: 24px;
-  padding-right: 24px;
+  width: 960px;
 }
 
 img {
-  width: 275px;
-  margin: 0px;
-  border: 2px solid #ACCFCC;
+  max-width: 275px;
+  max-height: 275px;
+  border: 2px solid #DF013A;
   border-radius: 25px;
   transition: all .5s;
+  margin: 18px;
+  opacity: .67;
 }
 
 img:hover{
-  opacity: .67;
+  opacity: 1;
   border-radius: 50%;
+}
+
+form{
+  text-align: center;
+}
+
+button{
+  margin-right: 20px;
+  border-style: none;
+  transition: all .5s;
+  border-radius: 4px;
+}
+
+button:hover{
+  background-color: #ACCFCC;
+  border-style: none;
+  transform: scale(1.2);
 }
